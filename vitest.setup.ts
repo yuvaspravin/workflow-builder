@@ -1,47 +1,44 @@
-import "@testing-library/jest-dom";
+import { vi } from "vitest";
 
-/* ============================================================
-   ResizeObserver (required by React Flow)
-   ============================================================ */
-class ResizeObserverMock implements ResizeObserver {
-  observe(): void {}
-  unobserve(): void {}
-  disconnect(): void {}
+/* ---------------- ResizeObserver ---------------- */
+class ResizeObserverMock {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
 }
 
-globalThis.ResizeObserver = ResizeObserverMock;
+(
+  globalThis as unknown as { ResizeObserver: typeof ResizeObserverMock }
+).ResizeObserver = ResizeObserverMock;
 
-/* ============================================================
-   URL + Object URL
-   ============================================================ */
-globalThis.URL.createObjectURL = (): string => "mock-object-url";
-globalThis.URL.revokeObjectURL = (): void => {};
-
-/* ============================================================
-   matchMedia (full MediaQueryList compatibility)
-   ============================================================ */
-Object.defineProperty(window, "matchMedia", {
+/* ---------------- matchMedia ---------------- */
+Object.defineProperty(globalThis, "matchMedia", {
   writable: true,
-  value: (query: string): MediaQueryList => ({
+  value: (query: string) => ({
     matches: false,
     media: query,
     onchange: null,
-
-    // modern API
-    addEventListener: () => {},
-    removeEventListener: () => {},
-    dispatchEvent: () => false,
-
-    // legacy API
-    addListener: () => {},
-    removeListener: () => {},
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
   }),
 });
 
-/* ============================================================
-   requestAnimationFrame (React Flow dependency)
-   ============================================================ */
-globalThis.requestAnimationFrame = (cb: FrameRequestCallback): number =>
-  window.setTimeout(cb, 0);
+/* ---------------- requestAnimationFrame ---------------- */
+(
+  globalThis as unknown as {
+    requestAnimationFrame: (cb: () => void) => number;
+  }
+).requestAnimationFrame = (cb) => {
+  return Number(setTimeout(cb, 0));
+};
 
-globalThis.cancelAnimationFrame = (id: number): void => window.clearTimeout(id);
+(
+  globalThis as unknown as {
+    cancelAnimationFrame: (id: number) => void;
+  }
+).cancelAnimationFrame = (id) => {
+  clearTimeout(id);
+};
