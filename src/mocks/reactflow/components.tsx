@@ -1,16 +1,16 @@
-import React, { type PropsWithChildren } from "react";
+import type { PropsWithChildren } from "react";
 
-export const ReactFlowProvider = ({ children }: PropsWithChildren) => (
-  <div>{children}</div>
-);
+export const ReactFlowProvider: React.FC<PropsWithChildren> = ({
+  children,
+}) => <div>{children}</div>;
 
-const ReactFlow = ({ children }: PropsWithChildren) => (
+const ReactFlow: React.FC<PropsWithChildren> = ({ children }) => (
   <div data-testid="reactflow">{children}</div>
 );
 
-export const Handle = () => <div />;
-export const Controls = () => <div />;
-export const MiniMap = () => <div />;
-export const Background = () => <div />;
+export const Handle: React.FC = () => <div />;
+export const Controls: React.FC = () => <div />;
+export const MiniMap: React.FC = () => <div />;
+export const Background: React.FC = () => <div />;
 
 export default ReactFlow;
